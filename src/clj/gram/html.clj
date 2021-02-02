@@ -1,5 +1,6 @@
 (ns gram.html
-  (:require [clojure.string :as string]))
+  (:require
+   [clojure.string :as string]))
 
 (def default-attribute-map
   {"." :class
@@ -10,6 +11,11 @@
    "&" :amp
    "*" :ast})
 
+(defn- collify [v]
+  (if (coll? v)
+    v
+    [v]))
+
 (defn input-checkbox [opts & children]
   [:input (assoc opts :type :checkbox)
    children])
@@ -18,8 +24,8 @@
   {:input/checkbox input-checkbox})
 
 (def default-formatter-map
-  {:class #(pr-str (string/join " " (mapv name (filter identity (flatten %)))))
-   :id #(pr-str (string/join " " (mapv name (filter identity (flatten %)))))
+  {:class #(pr-str (string/join " " (mapv name (filter identity (flatten (collify %))))))
+   :id #(pr-str (string/join " " (mapv name (filter identity (flatten (collify %))))))
    :type (comp pr-str name)
    :autocomplete (comp pr-str name)
    :for (comp pr-str name)
@@ -73,11 +79,18 @@
     :else
     children))
 
+(defn- attribute-value [opts k v]
+  (let [formatter (get-in opts [:gram/formatters k] default-formatter)]
+    (formatter (if (nil? v) "" v))))
+
 (defn- format-attribute [opts acc [k v]]
-  (format "%s %s=%s" acc (name k) ((get-in opts [:gram/formatters k] default-formatter) v)))
+  (format "%s %s=%s"
+          acc
+          (name k)
+          (attribute-value opts k v)))
 
 (defn- opts->html [opts html-opts]
-  (reduce (partial format-attribute opts)"" html-opts))
+  (reduce (partial format-attribute opts) "" html-opts))
 
 (defn- extract-opts-children
   [?html-opts children]
@@ -97,7 +110,13 @@
       :else :value)))
 
 (defn- concat-merge [opts extra]
-  (reduce (fn [acc [k v]] (update acc k concat v)) opts extra))
+  (reduce (fn [acc [k v]]
+            (update acc k
+                    (fn [vv]
+                      (-> (collify vv)
+                          (concat v)))))
+          opts
+          extra))
 
 (defmethod to-html :element [opts [k ?html-opts & children]]
   (let [[html-opts children] (extract-opts-children ?html-opts children)
@@ -129,11 +148,3 @@
                 (update :gram/formatters merge formatters)
                 (update-matcher))
             form)))
-
-(comment
-
-  ;; TODO
-  (html [:div {:id "foo"}])
-  ;; "<div id=\"\"></div>"
-
-  ,)

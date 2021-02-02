@@ -3,8 +3,7 @@
   :url "https://github.com/kwrooijen/gram"
   :license {:name "MIT"}
   :source-paths ["src/clj" "src/cljc" "src/cljs"]
-  :dependencies [[kwrooijen/hiccup "0.0.0-SNAPSHOT"]
-                 [kwrooijen/turbo "0.0.1-SNAPSHOT"]
+  :dependencies [[kwrooijen/turbo "0.0.1-SNAPSHOT"]
                  [kwrooijen/stimulus "0.0.1-SNAPSHOT"]]
   :plugins [[lein-cloverage "1.1.2"]
             [lein-codox "0.10.7"]
