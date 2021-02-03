@@ -34,6 +34,7 @@
    :type (comp pr-str keyword-name)
    :autocomplete (comp pr-str keyword-name)
    :for (comp pr-str keyword-name)
+   :name (comp pr-str keyword-name)
    :value (comp pr-str keyword-name)})
 
 (defn- default-formatter [v]
