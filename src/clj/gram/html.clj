@@ -23,13 +23,18 @@
 (def default-element-map
   {:input/checkbox input-checkbox})
 
+(defn- keyword-name [v]
+  (if (keyword? v)
+    (name v)
+    v))
+
 (def default-formatter-map
   {:class #(pr-str (string/join " " (mapv name (filter identity (flatten (collify %))))))
    :id #(pr-str (string/join " " (mapv name (filter identity (flatten (collify %))))))
-   :type (comp pr-str name)
-   :autocomplete (comp pr-str name)
-   :for (comp pr-str name)
-   :value (comp pr-str name)})
+   :type (comp pr-str keyword-name)
+   :autocomplete (comp pr-str keyword-name)
+   :for (comp pr-str keyword-name)
+   :value (comp pr-str keyword-name)})
 
 (defn- default-formatter [v]
   (if (or (string? v)
