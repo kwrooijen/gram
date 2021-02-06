@@ -4,7 +4,8 @@
   :license {:name "MIT"}
   :source-paths ["src/clj" "src/cljc" "src/cljs"]
   :dependencies [[kwrooijen/turbo "0.0.1-SNAPSHOT"]
-                 [kwrooijen/stimulus "0.0.1-SNAPSHOT"]]
+                 [kwrooijen/stimulus "0.0.1-SNAPSHOT"]
+                 [com.taoensso/sente "1.16.1"]]
   :plugins [[lein-cloverage "1.1.2"]
             [lein-codox "0.10.7"]
             [lein-ancient "0.6.15"]]
