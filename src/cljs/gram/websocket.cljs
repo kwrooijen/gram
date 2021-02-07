@@ -50,4 +50,7 @@
     (sente/start-client-chsk-router!
       ch-chsk -event-msg-handler)))
 
+(defn send! [id message]
+  (chsk-send! [id message]))
+
 (defn start! [] (start-router!))
