@@ -12,12 +12,14 @@
   (-> (js/document.querySelector "[data-csrf-token]")
       (.getAttribute "data-csrf-token")))
 
-(defmulti handle-event first)
+(defmulti handle-event (fn [k _data] k))
 
-(defmethod handle-event :gram/reload [_]
+(defmethod handle-event :gram/reload [__ ]
   (turbo.core/visit! js/window.location.href))
 
-(defmethod handle-event :default [e] (println "Unhandled event: " e))
+(defmethod handle-event :chsk/ping [_ _])
+
+(defmethod handle-event :default [e _] (println "Unhandled event: " e))
 
 (defmulti -event-msg-handler :id)
 
@@ -27,7 +29,7 @@
   (println "Unhandled event: %s" event))
 
 (defmethod -event-msg-handler :chsk/recv [{:as ev-msg :keys [?data]}]
-  (handle-event ?data))
+  (apply handle-event ?data))
 
 (defmethod -event-msg-handler :chsk/handshake [_])
 
