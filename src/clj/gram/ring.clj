@@ -6,7 +6,7 @@
 
 (defn- add-csrf [content request]
   (if-let [csrf-token (:anti-forgery-token request)]
-    (conj [:meta {:id "csrf" :data-csrf-token csrf-token}] content)
+    (conj content [:meta {:id "csrf" :data-csrf-token csrf-token}])
     content))
 
 (defn- check
@@ -25,14 +25,11 @@
        (cond
          (vector? result)
          {:headers {"Content-Type" "text/html"}
-          :session {:uid uid}
           :body (gram.html/html opts (add-csrf result request))}
          (check result)
          (-> result
              (update :body (fn [body] (gram.html/html opts (add-csrf body request))))
-             (assoc-in [:headers "Content-Type"] "text/html")
-             (assoc :session (:session request))
-             (update-in [:session :uid] (fn [uuid] (java.util.UUID/randomUUID))))
+             (assoc-in [:headers "Content-Type"] "text/html"))
          :else result)))))
 
 (defn wrap-gram

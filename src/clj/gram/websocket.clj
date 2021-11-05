@@ -59,5 +59,6 @@
 (defn broadcast!
   ([event-type] (broadcast! event-type {}))
   ([event-type data]
-   (doseq [uid (:ws @connected-uids)]
-     (chsk-send! uid [event-type data]))))
+   (when connected-uids
+     (doseq [uid (:ws @connected-uids)]
+       (chsk-send! uid [event-type data])))))

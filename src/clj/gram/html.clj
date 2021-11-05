@@ -29,8 +29,8 @@
     v))
 
 (def default-formatter-map
-  {:class #(pr-str (string/join " " (mapv name (filter identity (flatten (collify %))))))
-   :id #(pr-str (string/join " " (mapv name (filter identity (flatten (collify %))))))
+  {:class #(->> % collify flatten (filter identity) (mapv name) (string/join " ") pr-str)
+   :id #(->> % collify flatten (filter identity) (mapv name) (string/join " ") pr-str)
    :type (comp pr-str keyword-name)
    :autocomplete (comp pr-str keyword-name)
    :for (comp pr-str keyword-name)
