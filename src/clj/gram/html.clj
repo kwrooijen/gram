@@ -112,7 +112,7 @@
   (fn [_opts expr]
     (cond
       (vector? expr) :element
-      (list? expr) :list
+      (seq? expr) :list
       :else :value)))
 
 (defn- concat-merge [opts extra]
