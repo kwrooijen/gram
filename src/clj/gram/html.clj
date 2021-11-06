@@ -31,6 +31,7 @@
 (def default-formatter-map
   {:class #(->> % collify flatten (filter identity) (mapv name) (string/join " ") pr-str)
    :id #(->> % collify flatten (filter identity) (mapv name) (string/join " ") pr-str)
+   :data-action #(->> % collify flatten (filter identity) (mapv name) (string/join " ") pr-str)
    :type (comp pr-str keyword-name)
    :autocomplete (comp pr-str keyword-name)
    :for (comp pr-str keyword-name)
