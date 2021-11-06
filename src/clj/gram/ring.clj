@@ -20,8 +20,7 @@
   ([handler] (wrap-render handler {}))
   ([handler opts]
    (fn [request]
-     (let [result (handler request)
-           uid (str (java.util.UUID/randomUUID))]
+     (let [result (handler request)]
        (cond
          (vector? result)
          {:headers {"Content-Type" "text/html"}
@@ -34,10 +33,10 @@
 
 (defn wrap-gram
   ([handler] (wrap-gram handler {}))
-  ([handler _opts]
+  ([handler opts]
    (fn [request]
      ((-> handler
           (wrap-turbo-frame)
           (wrap-turbo-stream)
-          (wrap-render))
+          (wrap-render opts))
       request))))
