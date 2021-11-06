@@ -87,7 +87,11 @@
 
 (defn- attribute-value [opts k v]
   (let [formatter (get-in opts [:gram/formatters k] default-formatter)]
-    (formatter (if (nil? v) "" v))))
+    (formatter (cond
+                 (nil? v) ""
+                 (keyword? v) (str (namespace v) "/" (name v))
+                 :else
+                 v))))
 
 (defn- format-attribute [opts acc [k v]]
   (format "%s %s=%s"
