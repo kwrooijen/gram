@@ -89,7 +89,10 @@
   (let [formatter (get-in opts [:gram/formatters k] default-formatter)]
     (formatter (cond
                  (nil? v) ""
-                 (keyword? v) (str (namespace v) "/" (name v))
+                 (keyword? v)
+                 (if (namespace v)
+                   (str (namespace v) "/" (name v))
+                   (name v))
                  :else
                  v))))
 
