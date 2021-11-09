@@ -112,6 +112,9 @@
 (defn- extract-opts-children
   [?html-opts children]
   (cond
+    (and (nil? ?html-opts)
+         (nil? children))
+    [{} []]
     (map? ?html-opts)
     [?html-opts (flatten-children children)]
     (nil? children)
@@ -141,7 +144,7 @@
         html-opts (concat-merge html-opts tag-opts)]
     (cond
       (fn? tag)
-      (to-html opts (apply tag (remove nil? children)))
+      (to-html opts (apply tag children))
 
       (qualified-keyword? tag)
       (-> (get-in opts [:gram/elements tag])
