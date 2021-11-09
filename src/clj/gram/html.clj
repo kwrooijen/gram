@@ -65,16 +65,18 @@
     (assoc m :gram/matcher (tag-matcher attributes))))
 
 (defn- parse-tag [{:gram/keys [attributes matcher]} tag]
-  (let [[tag-name & xs] (string/split (name tag) matcher)]
-    [(if (qualified-keyword? tag)
-       (keyword (namespace tag) tag-name)
-       (keyword tag-name))
-     (reduce (fn [acc x]
-               (if-let [attribute-type (get attributes (subs x 0 1))]
-                 (update acc attribute-type conj (subs x 1))
-                 acc))
-             {}
-             xs)]))
+  (if (fn? tag)
+    [tag {}]
+    (let [[tag-name & xs] (string/split (name tag) matcher)]
+      [(if (qualified-keyword? tag)
+         (keyword (namespace tag) tag-name)
+         (keyword tag-name))
+       (reduce (fn [acc x]
+                 (if-let [attribute-type (get attributes (subs x 0 1))]
+                   (update acc attribute-type conj (subs x 1))
+                   acc))
+               {}
+               xs)])))
 
 (defn- flatten-children [children]
   (cond
@@ -136,10 +138,16 @@
   (let [[html-opts children] (extract-opts-children ?html-opts children)
         [tag tag-opts] (parse-tag opts k)
         html-opts (concat-merge html-opts tag-opts)]
-    (if (qualified-keyword? tag)
+    (cond
+      (fn? tag)
+      (to-html opts (apply tag (remove nil? children)))
+
+      (qualified-keyword? tag)
       (-> (get-in opts [:gram/elements tag])
           (apply html-opts children)
           (->> (to-html opts)))
+
+      :else
       (let [html-opts (opts->html opts html-opts)
             children (apply str (mapv (partial to-html opts) children))
             tag (name tag)]
